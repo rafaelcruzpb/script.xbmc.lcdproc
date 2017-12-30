@@ -51,7 +51,8 @@ class LCD_MODE:
   LCD_MODE_XBE_LAUNCH  = 6
   LCD_MODE_PVRTV       = 7
   LCD_MODE_PVRRADIO    = 8
-  LCD_MODE_MAX         = 9
+  LCD_MODE_VOLCHANGING = 9
+  LCD_MODE_MAX         = 10
 
 class LCD_LINETYPE:
   LCD_LINETYPE_TEXT         = "text"
@@ -348,6 +349,9 @@ class LcdBase():
         tmpMode = element.find("pvrradio")
         self.LoadMode(tmpMode, LCD_MODE.LCD_MODE_PVRRADIO)
 
+        tmpMode = element.find("volchanging")
+        self.LoadMode(tmpMode, LCD_MODE.LCD_MODE_VOLCHANGING)
+
         bHaveSkin = True
 
         # LCD.xml parsed successfully, so reset warning flag
@@ -495,15 +499,35 @@ class LcdBase():
     while (outLine < int(self.GetRows()) and inLine < len(self.m_lcdMode[mode])):
       #parse the progressbar infolabel by ourselfs!
       if self.m_lcdMode[mode][inLine]['type'] == LCD_LINETYPE.LCD_LINETYPE_PROGRESS or self.m_lcdMode[mode][inLine]['type'] == LCD_LINETYPE.LCD_LINETYPE_PROGRESSTIME:
-        # get playtime and duration and convert into seconds
-        percent = InfoLabel_GetProgressPercent()
-        pixelsWidth = self.SetProgressBar(percent, self.m_lcdMode[mode][inLine]['endx'])
-        line = "p" + str(pixelsWidth)
+        if mode == LCD_MODE.LCD_MODE_VOLCHANGING and self.m_lcdMode[mode][inLine]['type'] == LCD_LINETYPE.LCD_LINETYPE_PROGRESS:
+          # get volume percentage
+          percent = InfoLabel_GetVolumePercent()
+          if InfoLabel_IsMuted():
+            percent = 0
+          endx = self.m_lcdMode[mode][inLine]['endx']
+          pixelsWidth = self.SetProgressBar(percent, endx)
+          line = str(pixelsWidth)
+          log(xbmc.LOGDEBUG, "Volume changing: %s: %d%%, Muted: %s" % (InfoLabel_GetInfoLabel("Player.Volume"), percent, InfoLabel_GetInfoLabel("Player.Muted")))
+          log(xbmc.LOGDEBUG, "Volume changing: line: %s, endx: %d" % (line, endx))
+        else:
+          # get playtime and duration and convert into seconds
+          percent = InfoLabel_GetProgressPercent()
+          pixelsWidth = self.SetProgressBar(percent, self.m_lcdMode[mode][inLine]['endx'])
+          line = "p" + str(pixelsWidth)
       else:
         if self.m_lcdMode[mode][inLine]['type'] == LCD_LINETYPE.LCD_LINETYPE_ICONTEXT:
           self.SetPlayingStateIcon()
 
-        srcline = InfoLabel_GetInfoLabel(self.m_lcdMode[mode][inLine]['text'])
+        srcline = self.m_lcdMode[mode][inLine]['text']
+
+        # Handle special player volume level
+        srcline = re.sub(re.escape("$INFO[LCD.PlayerVolume]"), InfoLabel_GetPlayerVolumeText(), srcline, flags=re.IGNORECASE).strip()
+
+        if mode == LCD_MODE.LCD_MODE_VOLCHANGING:
+          log(xbmc.LOGDEBUG, "lcdproc render line: " + srcline)
+        srcline = InfoLabel_GetInfoLabel(srcline)
+        if mode == LCD_MODE.LCD_MODE_VOLCHANGING:
+          log(xbmc.LOGDEBUG, "lcdproc rendered: " + srcline)
 
         if len(srcline) > 0:
           srcline = self.StripBBCode(srcline)

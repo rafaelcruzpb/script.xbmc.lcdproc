@@ -305,10 +305,13 @@ class LCDProc(LcdBase):
         self.m_iBigDigits = 0 # No clock
       elif self.m_iColumns < 17:
         self.m_iBigDigits = 5 # HH:MM
-      elif self.m_iColumns < 20:
-        self.m_iBigDigits = 7 # H:MM:SS on play, HH:MM on clock
       else:
-        self.m_iBigDigits = 8 # HH:MM:SS
+        self.m_iBigDigits = 7 # H:MM:SS on play, HH:MM on clock
+
+      #elif self.m_iColumns < 20:
+      #  self.m_iBigDigits = 7 # H:MM:SS on play, HH:MM on clock
+      #else:
+      #  self.m_iBigDigits = 8 # HH:MM:SS
 
       # Check LCDproc if we can enable any extras or override values
       # (might override e.g. m_iBigDigits!)
@@ -488,7 +491,7 @@ class LCDProc(LcdBase):
       iDigitCount += 1
 
   def SetProgressBar(self, percent, pxWidth):
-    self.m_iProgressBarWidth = int(float(percent) * pxWidth)
+    self.m_iProgressBarWidth = int((float(percent)/100) * pxWidth)
     return self.m_iProgressBarWidth
 
   def SetPlayingStateIcon(self):

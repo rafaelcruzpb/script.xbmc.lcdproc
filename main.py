@@ -76,6 +76,7 @@ def HandleConnectionNotification(bConnectSuccess):
 def getLcdMode():
   ret = LCD_MODE.LCD_MODE_GENERAL
 
+  volChanging = InfoLabel_IsVolumeChanging()
   navActive = InfoLabel_IsNavigationActive()
   screenSaver = InfoLabel_IsScreenSaverActive()
   playingVideo = InfoLabel_PlayingVideo()
@@ -84,7 +85,9 @@ def getLcdMode():
   playingPVRTV = InfoLabel_PlayingLiveTV()
   playingPVRRadio = InfoLabel_PlayingLiveRadio()
 
-  if navActive:
+  if volChanging:
+    ret = LCD_MODE.LCD_MODE_VOLCHANGING
+  elif navActive:
     ret = LCD_MODE.LCD_MODE_NAVIGATION
   elif screenSaver:
     ret = LCD_MODE.LCD_MODE_SCREENSAVER

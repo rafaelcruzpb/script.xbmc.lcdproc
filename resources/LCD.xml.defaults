@@ -77,4 +77,8 @@
       <line>$INFO[LCD.PlayIcon] $INFO[PVR.EpgEventElapsedTime]$INFO[PVR.EpgEventDuration,/,]</line>
       <line>$INFO[LCD.ProgressBar]</line>
    </pvrradio>
+   <volchanging>
+      <line>Volume: $INFO[LCD.PlayerVolume]</line>
+      <line>$INFO[LCD.ProgressBar]</line>
+   </volchanging>
 </lcd>

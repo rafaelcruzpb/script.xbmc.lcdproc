@@ -167,9 +167,17 @@ def InfoLabel_IsScreenSaverActive():
 def InfoLabel_IsMuted():
   return InfoLabel_GetBool("Player.Muted")
 
+def InfoLabel_IsVolumeChanging():
+  return InfoLabel_WindowIsActive(WINDOW_IDS.WINDOW_DIALOG_VOLUME_BAR)
+
 def InfoLabel_GetVolumePercent():
   volumedb = float(string.replace(string.replace(InfoLabel_GetInfoLabel("Player.Volume"), ",", "."), " dB", ""))
   return (100 * (60.0 + volumedb) / 60)
+
+def InfoLabel_GetPlayerVolumeText():
+  if InfoLabel_IsMuted():
+    return "[Mute]"
+  return InfoLabel_GetInfoLabel("Player.Volume");
 
 def InfoLabel_GetPlayerTimeSecs():
   currentTimeAr = InfoLabel_GetPlayerTime().split(":")
