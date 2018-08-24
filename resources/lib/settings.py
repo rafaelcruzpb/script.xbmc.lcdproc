@@ -31,6 +31,9 @@ class Settings():
     # ctor
     def __init__(self):
         # init class members (settings) with defaults
+        self._gpiomode            = False
+        self._columns             = 20
+        self._rows                = 4
         self._hostip              = "127.0.0.1"
         self._hostport            = 13666
         self._timer               = time.time()
@@ -49,6 +52,16 @@ class Settings():
         self._usealternatecharset = False
         self._charset             = "iso-8859-1"
         self._useextraelements    = True
+
+
+    def getGpioMode(self):
+        return self._gpiomode
+
+    def getColumns(self):
+        return self._columns
+
+    def getRows(self):
+        return self._rows
 
     def getHostIp(self):
         return self._hostip
@@ -197,6 +210,7 @@ class Settings():
         hideconnpopups = KODI_ADDON_SETTINGS.getSetting("hideconnpopups") == "true"
         usealternatecharset = KODI_ADDON_SETTINGS.getSetting("usealternatecharset") == "true"
         charset = KODI_ADDON_SETTINGS.getSetting("charset")
+        gpiomode = KODI_ADDON_SETTINGS.getSetting("gpiomode")
 
         if self._scrolldelay != scrolldelay:
             self._scrolldelay = scrolldelay
@@ -248,6 +262,10 @@ class Settings():
 
         if self._charset != charset:
             self._charset = charset
+            self._settingsChanged = True
+
+        if self._gpiomode != gpiomode:
+            self._gpiomode = gpiomode
             self._settingsChanged = True
 
     # handles all settings and applies them as needed

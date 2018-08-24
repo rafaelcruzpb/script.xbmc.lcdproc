@@ -24,10 +24,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from resources.lib.xbmclcdproc import XBMCLCDproc
+from resources.lib.xbmclcd import XBMCLCD
 
 ######
 # script entry point
 if __name__ == "__main__":
-    xbmclcd = XBMCLCDproc()
+    xbmclcd = XBMCLCD()
     xbmclcd.RunLCD()

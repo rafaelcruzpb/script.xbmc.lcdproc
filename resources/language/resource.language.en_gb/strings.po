@@ -109,7 +109,11 @@ msgctxt "#32305"
 msgid "Hide connection error notifications"
 msgstr ""
 
-# empty strings from id 32306 to 32400
+msgctxt "#32306"
+msgid "GPIO Mode"
+msgstr ""
+
+# empty strings from id 32307 to 32400
 # Enum values: Scroll mode
 
 msgctxt "#32401"

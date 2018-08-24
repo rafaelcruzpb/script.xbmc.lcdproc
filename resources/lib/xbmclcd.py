@@ -1,5 +1,5 @@
 '''
-    XBMC LCDproc addon
+    XBMC LCD addon
 
     Main addon handler/control
 
@@ -34,8 +34,9 @@ import xbmcgui
 from .common import *
 from .settings import *
 from .lcdproc import *
+from .lcdgpio import *
 
-class XBMCLCDproc():
+class XBMCLCD():
 
     ########
     # ctor
@@ -49,11 +50,15 @@ class XBMCLCDproc():
         # instantiate Settings object
         self._Settings = Settings()
 
-        # instantiate LCDProc object
-        self._LCDproc = LCDProc(self._Settings)
-
         # initialize components
         self._Settings.setup()
+
+        # instantiate LCD object
+        if self._Settings.getGpioMode():
+            self._LCD = LCDGpio(self._Settings)
+        else:   
+            self._LCD = LCDProc(self._Settings)
+
 
     ########
     # HandleConnectionNotification():
@@ -77,13 +82,13 @@ class XBMCLCDproc():
         reconnect = self._Settings.checkForNewSettings()
 
         # check for new settings - networksettings changed?
-        if reconnect or not self._LCDproc.IsConnected():
+        if reconnect or not self._LCD.IsConnected():
 
             # reset notification flag if settingchanges require reconnect
             if reconnect:
                 self._failedConnectionNotified = False
 
-            ret = self._LCDproc.Initialize()
+            ret = self._LCD.Initialize()
             if not self._Settings.getHideConnPopups():
                 self.HandleConnectionNotification(ret)
 
@@ -98,8 +103,8 @@ class XBMCLCDproc():
                 settingsChanged = self._Settings.didSettingsChange()
 
                 if settingsChanged:
-                    self._LCDproc.UpdateGUISettings()
+                    self._LCD.UpdateGUISettings()
 
-                self._LCDproc.Render(settingsChanged)
+                self._LCD.Render(settingsChanged)
 
-        self._LCDproc.Shutdown()
+        self._LCD.Shutdown()
